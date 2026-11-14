@@ -1,0 +1,27 @@
+{% extends "shell.html" %}
+
+{% block page_content %}
+<section class="page-heading">
+  <div><p class="eyebrow">REVENUE &amp; PERFORMANCE</p><h1>Sales reports</h1><p class="heading-subtitle">Sales and averages calculated from saved transactions.</p></div>
+  <button class="secondary-button export-button" type="button" data-export-table="sales-table">↓ Export CSV</button>
+</section>
+<section class="metric-grid three-metrics">
+  <article class="card metric-card"><span class="metric-label">Total sales</span><strong>${{ "%.2f"|format(total_sales) }}</strong><span class="metric-hint">All recorded transactions</span></article>
+  <article class="card metric-card"><span class="metric-label">Transactions</span><strong>{{ transactions|length }}</strong><span class="metric-hint">All time</span></article>
+  <article class="card metric-card"><span class="metric-label">Average sale</span><strong>${{ "%.2f"|format(average_sale) }}</strong><span class="metric-hint">Per transaction</span></article>
+</section>
+<article class="card page-table-card">
+  <div class="card-heading table-toolbar"><div><h2>Sales history</h2><p class="card-subtitle">Amounts and quantities from your transaction records.</p></div></div>
+  <div class="table-scroll"><table class="data-table" id="sales-table">
+    <thead><tr><th>Transaction</th><th>Customer</th><th>Product</th><th>Quantity</th><th>Sales total</th></tr></thead>
+    <tbody>
+      {% for transaction in transactions %}
+      <tr><td><strong>#{{ transaction.id }}</strong></td><td>{{ transaction.customer.name }}</td><td>{{ transaction.product.name }}</td><td>{{ transaction.quantity }}</td><td>${{ "%.2f"|format(transaction.total_amount) }}</td></tr>
+      {% else %}
+      <tr><td colspan="5" class="empty-state">No sales recorded yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+  <div class="table-footer"><span>Showing <strong>{{ transactions|length }}</strong> transactions</span><span class="table-note">Transaction dates are not stored in the current database schema.</span></div>
+</article>
+{% endblock %}

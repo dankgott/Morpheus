@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Page not found | Morpheus{% endblock %}
+
+{% block body %}
+<main class="error-page">
+  <section class="error-card">
+    <a class="brand" href="{{ url_for('home') }}">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none">
+          <path d="M5 8h3l3.1 13.2h13.8l3.2-9.5H10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="13.2" cy="25.5" r="1.8" fill="currentColor"/><circle cx="23.2" cy="25.5" r="1.8" fill="currentColor"/>
+        </svg>
+      </span>
+      <span>Morpheus</span>
+    </a>
+    <div class="error-code">404</div>
+    <h1>Page not found</h1>
+    <p>The page you’re looking for may have moved or doesn’t exist.</p>
+    <a class="primary-button" href="{{ url_for('home') }}">Back to dashboard</a>
+  </section>
+</main>
+{% endblock %}

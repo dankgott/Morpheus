@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="app-shell">
+  <aside class="sidebar" aria-label="Main navigation">
+    <a class="brand" href="/" aria-label="Duka Langu home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none">
+          <path d="M5 8h3l3.1 13.2h13.8l3.2-9.5H10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="13.2" cy="25.5" r="1.8" fill="currentColor"/>
+          <circle cx="23.2" cy="25.5" r="1.8" fill="currentColor"/>
+          <path d="M13 5v5M10.5 7.5h5M21 5v5M18.5 7.5h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span>Morpheus</span>
+    </a>
+
+    <nav class="nav-list">
+      <a class="nav-link active" href="/">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a class="nav-link" href="{{ url_for('overview') }}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m16 16 4 4M8 11l2-2 2 2 3-3"/></svg>
+        <span>Overview</span>
+      </a>
+      <a class="nav-link" href="{{ url_for('sales') }}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M6 16V9M11 16V5M16 16v-4M20 16V7"/></svg>
+        <span>Sales reports</span>
+      </a>
+      <a class="nav-link" href="{{ url_for('stock') }}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4.5 7.8 7.5 4.4 7.5-4.4M12 12.2V21"/></svg>
+        <span>Stock</span><span class="nav-chevron">⌄</span>
+      </a>
+      <a class="nav-link" href="{{ url_for('customers') }}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19v-1.2a4 4 0 0 1 4-4h3a4 4 0 0 1 4 4V19M9.5 10.5a3.3 3.3 0 1 0 0-6.6 3.3 3.3 0 0 0 0 6.6ZM16 4.3a3.3 3.3 0 0 1 0 6.4M17 13.8a4 4 0 0 1 3 3.9V19"/></svg>
+        <span>Customers</span>
+      </a>
+      <a class="nav-link" href="{{ url_for('products') }}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v13H4zM8 7V5a4 4 0 0 1 8 0v2M4 11h16"/></svg>
+        <span>Products</span>
+      </a>
+      <a class="nav-link" href="{{ url_for('transactions') }}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M17 7.5c0-1.7-1.9-3-4.5-3S8 5.7 8 7.2s1.2 2.4 4.5 3.1S17 12 17 13.7s-1.9 3-4.5 3S8 15.4 8 13.8"/></svg>
+        <span>Transactions</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <span class="online-dot"></span>
+      <span>Store is open</span>
+      <span class="footer-status">Live</span>
+    </div>
+  </aside>
+
+  <main class="main-content" id="dashboard">
+    <header class="topbar">
+      <label class="search-box">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m16 16 4 4"/></svg>
+        <input type="search" placeholder="Search anything..." aria-label="Search dashboard" data-global-search>
+        <kbd>⌘ K</kbd>
+      </label>
+      <div class="topbar-actions">
+        <div class="notification-menu">
+          <button class="icon-button notification-button" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="notification-panel" data-notifications-toggle>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+            <span class="notification-dot" hidden></span><span class="notification-count" hidden></span>
+          </button>
+          <section class="notification-panel" id="notification-panel" aria-label="Notifications" hidden>
+            <div class="notification-panel-heading"><div><h2>Notifications</h2><p data-notification-summary>Loading notifications…</p></div><button class="notification-read-all" type="button" data-notifications-read-all hidden>Mark all read</button></div>
+            <div class="notification-list" data-notification-list aria-live="polite"></div>
+          </section>
+        </div>
+        <button class="profile-button" type="button" aria-label="Account menu">
+          <span class="avatar avatar-owner">DB</span>
+          <span class="profile-name">Daniell Blenqui</span>
+          <svg class="profile-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="page-heading">
+      <div>
+        <p class="eyebrow">STORE SUMMARY</p>
+        <h1>Dashboard</h1>
+        <p class="heading-subtitle">Here’s what’s happening with your store today.</p>
+      </div>
+      <a class="primary-button" href="{{ url_for('transactions') }}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        New sale
+      </a>
+    </section>
+
+    <section class="dashboard-grid" aria-label="Store overview">
+      <article class="card trends-card" id="trends">
+        <div class="card-heading">
+          <div>
+            <h2>Sales trends</h2>
+            <p class="card-subtitle">Recent recorded sales</p>
+          </div>
+          <button class="select-button" type="button">This week <span>⌄</span></button>
+        </div>
+        <div class="trend-content">
+          <div class="chart-area" role="img" aria-label="Bar chart showing recent recorded sales">
+            <div class="chart-y-labels"><span>${{ "%.0f"|format(max_sales) }}</span><span>${{ "%.0f"|format(max_sales * 0.75) }}</span><span>${{ "%.0f"|format(max_sales * 0.5) }}</span><span>${{ "%.0f"|format(max_sales * 0.25) }}</span><span>$0</span></div>
+            <div class="bar-chart">
+              <div class="chart-gridline line-one"></div><div class="chart-gridline line-two"></div><div class="chart-gridline line-three"></div><div class="chart-gridline line-four"></div>
+              {% for transaction in transactions %}
+              <div class="bar-column"><span class="bar" style="--bar-height:{{ (transaction.total_amount / max_sales * 100)|round|int }}%"></span><span class="bar-label">#{{ transaction.id }}</span></div>
+              {% else %}
+              <p class="empty-state">Record a sale to see recent sales here.</p>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="donut-wrap" role="img" aria-label="Total recorded sales">
+            <div class="donut-chart"><div class="donut-center"><strong>{{ transactions|length }}</strong><span>Recent<br>sales</span></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card reports-card" id="sales-reports">
+        <div class="card-heading">
+          <div>
+            <h2>Sales reports</h2>
+            <p class="card-subtitle">Today’s sales summary</p>
+          </div>
+          <button class="more-button" type="button" aria-label="More sales report options">···</button>
+        </div>
+        <div class="report-list">
+          <div class="report-row">
+            <span class="report-icon blue"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 12 3 3 7-7"/><circle cx="12" cy="12" r="9"/></svg></span>
+            <div class="report-label"><strong>Total sales</strong><span>All recorded transactions</span></div>
+            <div class="report-value"><strong>${{ "%.2f"|format(total_sales) }}</strong></div>
+          </div>
+          <div class="report-row">
+            <span class="report-icon violet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+            <div class="report-label"><strong>Transactions</strong><span>Sales recorded</span></div>
+            <div class="report-value"><strong>{{ transaction_count }}</strong></div>
+          </div>
+          <div class="report-row">
+            <span class="report-icon green"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h16M6 15l4-4 3 2 5-6M15 7h3v3"/></svg></span>
+            <div class="report-label"><strong>Average sale</strong><span>Per transaction</span></div>
+            <div class="report-value"><strong>${{ "%.2f"|format(total_sales / transaction_count if transaction_count else 0) }}</strong></div>
+          </div>
+        </div>
+        <a class="text-link" href="{{ url_for('sales') }}">View sales report <span>→</span></a>
+      </article>
+
+      <article class="card inventory-card" id="inventory">
+        <div class="card-heading">
+          <div>
+            <h2>Inventory management</h2>
+            <p class="card-subtitle">Keep track of your top products</p>
+          </div>
+          <a class="select-button" href="{{ url_for('stock') }}">View inventory <span>→</span></a>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr><th>Product</th><th>Category</th><th>Stock</th><th>Price</th><th>Transactions</th></tr>
+            </thead>
+            <tbody>
+              {% for product in products %}
+              <tr>
+                <td><span class="product-cell"><span class="product-icon product-sun">◉</span><strong>{{ product.name }}</strong></span></td>
+                <td>{{ product.category }}</td><td>{{ product.stock }}</td><td>${{ "%.2f"|format(product.price) }}</td><td>{{ product.transactions|length }}</td>
+              </tr>
+              {% else %}
+              <tr><td colspan="5" class="empty-state">No products in the database yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="table-footer">
+          <span>Showing <strong>{{ products|length }}</strong> products</span>
+          <a class="text-link" href="{{ url_for('products') }}">View all →</a>
+        </div>
+      </article>
+
+      <article class="card customers-card" id="customers">
+        <div class="card-heading">
+          <div>
+            <h2>Customer data</h2>
+            <p class="card-subtitle">Your latest customers</p>
+          </div>
+          <a class="more-link" href="{{ url_for('customers') }}">See all <span>→</span></a>
+        </div>
+        <div class="customer-table">
+          <div class="customer-table-head"><span>Customer</span><span>Sales</span></div>
+          {% for customer in customers %}
+          <div class="customer-row"><span class="customer-person"><span class="avatar avatar-one">{{ customer.name[:2]|upper }}</span><strong>{{ customer.name }}</strong></span><span>{{ customer.transactions|length }}</span></div>
+          {% else %}
+          <p class="empty-state">No customers in the database yet.</p>
+          {% endfor %}
+        </div>
+      </article>
+    </section>
+    <footer class="page-footer"><span>© 2024 Duka Langu</span><span>Made for your business <span class="heart">♥</span></span></footer>
+  </main>
+</div>
+{% endblock %}

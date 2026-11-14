@@ -1,0 +1,48 @@
+{% extends "shell.html" %}
+
+{% block page_content %}
+<section class="page-heading">
+  <div><p class="eyebrow">PAYMENTS &amp; ORDERS</p><h1>Transactions</h1><p class="heading-subtitle">Sales recorded in your database.</p></div>
+  <button class="primary-button" type="button" data-open-dialog="transaction-dialog"><span>＋</span> Record sale</button>
+</section>
+<section class="metric-grid three-metrics">
+  <article class="card metric-card"><span class="metric-label">Total sales</span><strong>${{ "%.2f"|format(total_sales) }}</strong><span class="metric-hint">All recorded transactions</span></article>
+  <article class="card metric-card"><span class="metric-label">Transactions</span><strong>{{ transactions|length }}</strong><span class="metric-hint">All time</span></article>
+  <article class="card metric-card"><span class="metric-label">Average sale</span><strong>${{ "%.2f"|format(average_sale) }}</strong><span class="metric-hint">Per transaction</span></article>
+</section>
+<article class="card page-table-card">
+  <div class="card-heading table-toolbar"><div><h2>Transaction history</h2><p class="card-subtitle">Each transaction shows its customer, product, quantity, and stored total.</p></div><button class="secondary-button export-button" type="button" data-export-table="transactions-table">↓ Export CSV</button></div>
+  <div class="table-scroll"><table class="data-table" id="transactions-table">
+    <thead><tr><th>Transaction</th><th>Customer</th><th>Product</th><th>Quantity</th><th>Total</th></tr></thead>
+    <tbody>
+      {% for transaction in transactions %}
+      <tr><td><strong>#{{ transaction.id }}</strong></td><td>{{ transaction.customer.name }}</td><td>{{ transaction.product.name }}</td><td>{{ transaction.quantity }}</td><td>${{ "%.2f"|format(transaction.total_amount) }}</td></tr>
+      {% else %}
+      <tr><td colspan="5" class="empty-state">No transactions recorded yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+  <div class="table-footer"><span>Showing <strong>{{ transactions|length }}</strong> transactions</span><span class="table-note">Transaction date and payment method are not stored in the current database schema.</span></div>
+</article>
+<dialog class="form-dialog" id="transaction-dialog">
+  <form method="dialog" class="dialog-close-form"><button class="dialog-close" aria-label="Close">×</button></form>
+  <h2>Record a sale</h2><p class="card-subtitle">The sale total is calculated from the selected product and quantity.</p>
+  <form method="post" action="{{ url_for('transactions') }}">
+    <label class="form-field">Customer
+      <select name="customer_id" required>
+        <option value="">Choose customer</option>
+        {% for customer in customers %}<option value="{{ customer.id }}">{{ customer.name }}</option>{% endfor %}
+      </select>
+    </label>
+    <label class="form-field">Product
+      <select name="product_id" required>
+        <option value="">Choose product</option>
+        {% for product in products %}<option value="{{ product.id }}">{{ product.name }} — {{ product.stock }} in stock (${{ "%.2f"|format(product.price) }})</option>{% endfor %}
+      </select>
+    </label>
+    <label class="form-field">Quantity<input name="quantity" type="number" min="1" step="1" value="1" required></label>
+    {% if not customers or not products %}<p class="form-help">Add at least one customer and one in-stock product before recording a sale.</p>{% endif %}
+    <div class="dialog-actions"><button class="secondary-button" type="button" data-close-dialog>Cancel</button><button class="primary-button" type="submit" {% if not customers or not products %}disabled{% endif %}>Record sale</button></div>
+  </form>
+</dialog>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "shell.html" %}
+
+{% block page_content %}
+<section class="page-heading">
+  <div><p class="eyebrow">INVENTORY CONTROL</p><h1>Stock</h1><p class="heading-subtitle">Monitor availability and restock products before they run out.</p></div>
+  <button class="secondary-button export-button" type="button" data-export-table="stock-table">↓ Export CSV</button>
+</section>
+<section class="metric-grid three-metrics">
+  <article class="card metric-card"><span class="metric-label">Total products</span><strong>{{ products|length }}</strong><span class="metric-hint">Database records</span></article>
+  <article class="card metric-card"><span class="metric-label">Low stock</span><strong class="metric-warn">{{ products|selectattr('stock', 'le', low_stock_threshold)|list|length }}</strong><span class="metric-hint">At or below {{ low_stock_threshold }} units</span></article>
+  <article class="card metric-card"><span class="metric-label">Out of stock</span><strong>{{ products|selectattr('stock', 'equalto', 0)|list|length }}</strong><a class="metric-action" href="{{ url_for('products') }}">Manage products →</a></article>
+</section>
+<article class="card page-table-card">
+  <div class="card-heading table-toolbar"><div><h2>Inventory levels</h2><p class="card-subtitle">Select restock to add five units to a product</p></div><label class="filter-label">Stock status <select data-filter-status><option value="">All products</option><option value="Low stock">Low stock</option><option value="In stock">In stock</option><option value="Out of stock">Out of stock</option></select></label></div>
+  <div class="table-scroll"><table class="data-table" id="stock-table">
+    <thead><tr><th>Product</th><th>SKU</th><th>Category</th><th>In stock</th><th>Reorder point</th><th>Status</th><th>Action</th></tr></thead>
+    <tbody>
+      {% for product in products %}
+      <tr><td><strong>{{ product.name }}</strong></td><td>{{ product.sku }}</td><td>{{ product.category }}</td><td>{{ product.stock }}</td><td>{{ low_stock_threshold }}</td><td><span class="status-pill {{ 'status-out' if product.stock == 0 else 'status-warn' if product.stock <= low_stock_threshold else 'status-good' }}">{{ 'Out of stock' if product.stock == 0 else 'Low stock' if product.stock <= low_stock_threshold else 'In stock' }}</span></td><td><form method="post" action="{{ url_for('restock_product', product_id=product.id) }}"><button class="small-button" type="submit">Restock +5</button></form></td></tr>
+      {% else %}
+      <tr><td colspan="7" class="empty-state">No products in the database yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+  <div class="table-footer"><span>Showing <strong>{{ products|length }}</strong> products</span></div>
+</article>
+{% endblock %}

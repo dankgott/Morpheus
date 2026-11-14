@@ -1,0 +1,37 @@
+{% extends "shell.html" %}
+
+{% block page_content %}
+<section class="page-heading">
+  <div><p class="eyebrow">CUSTOMER RELATIONSHIPS</p><h1>Customers</h1><p class="heading-subtitle">Customers currently saved in your database.</p></div>
+  <button class="primary-button" type="button" data-open-dialog="customer-dialog"><span>＋</span> Add customer</button>
+</section>
+<section class="metric-grid three-metrics">
+  <article class="card metric-card"><span class="metric-label">Total customers</span><strong>{{ customers|length }}</strong><span class="metric-hint">Database records</span></article>
+  <article class="card metric-card"><span class="metric-label">Customers with sales</span><strong>{{ customers|selectattr('transactions')|list|length }}</strong><span class="metric-hint">At least one transaction</span></article>
+  <article class="card metric-card"><span class="metric-label">Customer sales</span><strong>${{ "%.2f"|format(total_customer_sales) }}</strong><span class="metric-hint">Total transaction value</span></article>
+</section>
+<article class="card page-table-card">
+  <div class="card-heading table-toolbar"><div><h2>All customers</h2><p class="card-subtitle">Search the list using the search field above</p></div><button class="secondary-button export-button" type="button" data-export-table="customers-table">↓ Export CSV</button></div>
+  <div class="table-scroll"><table class="data-table" id="customers-table">
+    <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Sales</th><th>Total spent</th></tr></thead>
+    <tbody>
+      {% for customer in customers %}
+      <tr><td><strong>{{ customer.name }}</strong></td><td>{{ customer.email }}</td><td>{{ customer.phone or "—" }}</td><td>{{ customer.transactions|length }}</td><td>${{ "%.2f"|format(customer.transactions|sum(attribute='total_amount')) }}</td></tr>
+      {% else %}
+      <tr><td colspan="5" class="empty-state">No customers in the database yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+  <div class="table-footer"><span>Showing <strong>{{ customers|length }}</strong> customers</span></div>
+</article>
+<dialog class="form-dialog" id="customer-dialog">
+  <form method="dialog" class="dialog-close-form"><button class="dialog-close" aria-label="Close">×</button></form>
+  <h2>Add customer</h2><p class="card-subtitle">Save a new customer to the database.</p>
+  <form method="post" action="{{ url_for('customers') }}">
+    <label class="form-field">Full name<input name="name" required autocomplete="name"></label>
+    <label class="form-field">Email<input name="email" type="email" required autocomplete="email"></label>
+    <label class="form-field">Phone<input name="phone" type="tel" autocomplete="tel"></label>
+    <div class="dialog-actions"><button class="secondary-button" type="button" data-close-dialog>Cancel</button><button class="primary-button" type="submit">Add customer</button></div>
+  </form>
+</dialog>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "shell.html" %}
+
+{% block page_content %}
+<section class="page-heading">
+  <div><p class="eyebrow">CATALOG MANAGEMENT</p><h1>Products</h1><p class="heading-subtitle">Add, review, and manage the products in your store.</p></div>
+  <button class="primary-button" type="button" data-open-dialog="product-dialog"><span>＋</span> Add product</button>
+</section>
+<section class="metric-grid three-metrics">
+  <article class="card metric-card"><span class="metric-label">Total products</span><strong>{{ products|length }}</strong><span class="metric-hint">Database records</span></article>
+  <article class="card metric-card"><span class="metric-label">Categories</span><strong>{{ category_count }}</strong><span class="metric-hint">Distinct product categories</span></article>
+  <article class="card metric-card"><span class="metric-label">Average price</span><strong>${{ "%.2f"|format(average_price) }}</strong><span class="metric-hint">Across your catalog</span></article>
+</section>
+<article class="card page-table-card">
+  <div class="card-heading table-toolbar"><div><h2>Product catalog</h2><p class="card-subtitle">Use the search field above to find a product</p></div><button class="secondary-button export-button" type="button" data-export-table="products-table">↓ Export CSV</button></div>
+  <div class="table-scroll"><table class="data-table" id="products-table">
+    <thead><tr><th>Product</th><th>SKU</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th></tr></thead>
+    <tbody>
+    {% for product in products %}  
+      <tr><td><strong>{{ product.name }}</strong></td><td>{{ product.sku }}</td><td>{{ product.category }}</td><td>${{ "%.2f"|format(product.price) }}</td><td>{{ product.stock }}</td><td><span class="status-pill {{ 'status-out' if product.stock == 0 else 'status-warn' if product.stock <= low_stock_threshold else 'status-good' }}">{{ 'Out of stock' if product.stock == 0 else 'Low stock' if product.stock <= low_stock_threshold else 'In stock' }}</span></td></tr>
+    {% endfor %}
+      {% if not products %}<tr><td colspan="6" class="empty-state">No products in the database yet.</td></tr>{% endif %}
+    </tbody>
+  </table></div>
+  <div class="table-footer"><span>Showing <strong>{{ products|length }}</strong> products</span></div>
+</article>
+<dialog class="form-dialog" id="product-dialog">
+  <form method="dialog" class="dialog-close-form"><button class="dialog-close" aria-label="Close">×</button></form>
+  <h2>Add product</h2><p class="card-subtitle">Create a product listing in the database.</p>
+  <form method="post" action="{{ url_for('products') }}">
+    <label class="form-field">Product name<input name="name" required></label>
+    <label class="form-field">SKU<input name="sku" required></label>
+    <label class="form-field">Category<input name="category" required></label>
+    <div class="form-row"><label class="form-field">Price<input name="price" type="number" min="0" step="0.01" required></label><label class="form-field">Stock<input name="stock" type="number" min="0" step="1" required></label></div>
+    <div class="dialog-actions"><button class="secondary-button" type="button" data-close-dialog>Cancel</button><button class="primary-button" type="submit">Add product</button></div>
+  </form>
+</dialog>
+{% endblock %}

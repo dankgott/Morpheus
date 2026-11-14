@@ -1,0 +1,52 @@
+{% extends "shell.html" %}
+
+{% block page_content %}
+<section class="page-heading">
+  <div><p class="eyebrow">YOUR STORE AT A GLANCE</p><h1>Overview</h1><p class="heading-subtitle">A quick look at how your business is doing.</p></div>
+  <a class="primary-button" href="{{ url_for('sales') }}">View sales report <span>→</span></a>
+</section>
+<section class="metric-grid">
+  <article class="card metric-card"><span class="metric-icon blue">↗</span><span class="metric-label">Total sales</span><strong>${{ "%.2f"|format(total_sales) }}</strong><span class="metric-hint">All recorded transactions</span></article>
+  <article class="card metric-card"><span class="metric-icon violet">▤</span><span class="metric-label">Transactions</span><strong>{{ total_transactions }}</strong><span class="metric-hint">Database records</span></article>
+  <article class="card metric-card"><span class="metric-icon green">◎</span><span class="metric-label">Customers</span><strong>{{ customers_count }}</strong><span class="metric-hint">Database records</span></article>
+  <article class="card metric-card"><span class="metric-icon orange">◈</span><span class="metric-label">Low stock items</span><strong>{{ low_stock_count }}</strong><a class="metric-action" href="{{ url_for('stock') }}">Review inventory →</a></article>
+</section>
+<section class="overview-grid">
+  <article class="card">
+    <div class="card-heading"><div><h2>Recent sales</h2><p class="card-subtitle">Most recent transactions (dates are not stored yet)</p></div><a class="select-button" href="{{ url_for('sales') }}">Full report <span>→</span></a></div>
+    <div class="overview-chart" role="img" aria-label="Recent transaction sales">
+      <div class="chart-y-labels"><span>Highest</span><span></span><span></span><span></span><span>Lowest</span></div>
+      <div class="line-chart">
+        <div class="chart-gridline line-one"></div><div class="chart-gridline line-two"></div><div class="chart-gridline line-three"></div><div class="chart-gridline line-four"></div>
+        <div class="overview-bars">
+          {% for transaction in trend_transactions %}
+          <div class="overview-bar-column" title="Transaction #{{ transaction.id }}: ${{ '%.2f'|format(transaction.total_amount) }}"><span class="overview-bar" style="height:{{ (transaction.total_amount / max_sales * 100)|round|int }}%"></span><span>#{{ transaction.id }}</span></div>
+          {% else %}
+          <p class="empty-state">Record a sale to see it in this chart.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </article>
+  <article class="card">
+    <div class="card-heading"><div><h2>Top products</h2><p class="card-subtitle">Best sellers by recorded sales</p></div><a class="more-link" href="{{ url_for('products') }}">See all →</a></div>
+    <div class="rank-list">
+      {% for product, units_sold, sales_total in top_products %}
+      <div class="rank-row"><span class="rank-number">{{ "%02d"|format(loop.index) }}</span><span class="rank-product"><strong>{{ product.name }}</strong><small>{{ units_sold }} sold · {{ product.category }}</small></span><strong>${{ "%.2f"|format(sales_total) }}</strong></div>
+      {% else %}
+      <p class="empty-state">No products in the database yet.</p>
+      {% endfor %}
+    </div>
+  </article>
+</section>
+<article class="card activity-card">
+  <div class="card-heading"><div><h2>Recent activity</h2><p class="card-subtitle">Latest updates from your store</p></div><a class="more-link" href="{{ url_for('transactions') }}">All transactions →</a></div>
+  <div class="activity-list">
+    {% for transaction in recent_transactions %}
+    <div class="activity-row"><span class="activity-dot sale-dot"></span><span><strong>Sale #{{ transaction.id }}</strong><small>{{ transaction.customer.name }} · {{ transaction.product.name }} × {{ transaction.quantity }}</small></span><strong>${{ "%.2f"|format(transaction.total_amount) }}</strong><span></span></div>
+    {% else %}
+    <p class="empty-state">No transactions recorded yet.</p>
+    {% endfor %}
+  </div>
+</article>
+{% endblock %}
